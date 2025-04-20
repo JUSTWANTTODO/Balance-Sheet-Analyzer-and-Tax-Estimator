@@ -37,7 +37,7 @@ def get_gemini_model():
     return ChatGoogleGenerativeAI(
         temperature=0.5,
         model="gemini-1.5-flash",
-        google_api_key=os.getenv("GOOGLE_API_KEY"),
+        google_api_key=os.getenv("AIzaSyA49GFXgAsC3rZgvGCTRVbQf4k8x_q2ZvI"),
         safety_settings={
             HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
             HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
