@@ -5,18 +5,15 @@ from io import BytesIO
 import pandas as pd
 
 def init_db():
-    """Initialize the database and create tables if they don't exist"""
-    conn = sqlite3.connect("financial_reports.db")
+    conn = get_db_connection()  # Use the cached connection
     c = conn.cursor()
-    
     c.execute('''CREATE TABLE IF NOT EXISTS reports
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                  filename TEXT,
-                  upload_date TEXT,
-                  analysis_text TEXT,
-                  file_data BLOB)''')
+                 filename TEXT,
+                 upload_date TEXT,
+                 analysis_text TEXT,
+                 file_data BLOB)''')
     conn.commit()
-    conn.close()
 
 def save_report(filename, analysis_text, file_data):
     """Save a report to the database"""
