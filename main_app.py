@@ -10,10 +10,16 @@ from fpdf import FPDF
 from datetime import datetime
 
 
-google_api_key=st.secrets["GOOGLE_API_KEY"]
-if not google_api_key:
-    st.error("Google API key not found. Please configure it in Streamlit secrets.")
-    st.stop()
+if "GOOGLE_API_KEY" not in st.secrets:
+    st.error("""
+        API key not configured. For public repositories:
+        1. Go to Streamlit Cloud → Settings → Secrets
+        2. Add: GOOGLE_API_KEY='your_actual_key_here'
+        3. Never commit secrets to GitHub!
+        """)
+    st.stop()  
+    
+google_api_key = st.secrets["GOOGLE_API_KEY"]
 
 # Configure Streamlit
 st.set_page_config(page_title="Balance Sheet Analyzer & Tax Estimator", layout="wide")
