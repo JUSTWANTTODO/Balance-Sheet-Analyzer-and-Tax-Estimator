@@ -23,7 +23,7 @@ from db_utils import init_db, save_report, load_all_reports, load_single_report
 init_db()
 
 
-google_api_key = st.secrets.get("GOOGLE_API_KEY", os.getenv("GOOGLE_API_KEY"))
+google_api_key=st.secrets["GOOGLE_API_KEY"]
 if not google_api_key:
     st.error("Google API key not found. Please configure it in Streamlit secrets.")
     st.stop()
@@ -49,7 +49,7 @@ def get_gemini_model():
     return ChatGoogleGenerativeAI(
         temperature=0.5,
         model="gemini-1.5-flash",
-        google_api_key=os.getenv("AIzaSyA49GFXgAsC3rZgvGCTRVbQf4k8x_q2ZvI"),
+        google_api_key=st.secrets["GOOGLE_API_KEY"],  
         safety_settings={
             HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
             HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
@@ -67,7 +67,6 @@ uploaded_file = st.sidebar.file_uploader(
 )
 
 # Function to collect missing tax inputs
-# (Previous imports and setup remain the same until get_missing_tax_inputs function)
 
 def get_missing_tax_inputs(analysis_text):
     st.sidebar.subheader("Provide Missing Tax Information")
@@ -492,15 +491,15 @@ if uploaded_file:
         
         if st.button("Generate Financial Analysis", type="primary"):
             with st.spinner("Analyzing financial data..."):
-                # Add a progress bar and timeout
-                with st.spinner("Analyzing financial data..."):
-                    progress_bar = st.progress(0)
-                    try:
+                try:
+                    with time_limit(30):  # 30 second timeout
                         analysis = analyze_financials(data)
-                        progress_bar.progress(100)
-                    except Exception as e:
-                        st.error(f"Analysis failed: {str(e)}")
-                        st.stop()
+                        st.session_state.analysis = analysis
+                        st.session_state.analysis_done = True
+                except TimeoutException:
+                    st.error("Analysis timed out after 30 seconds")
+                except Exception as e:
+                    st.error(f"Failed: {str(e)}")
                                 
                 st.session_state.analysis = analysis
                 st.session_state.analysis_done = True
