@@ -16,14 +16,12 @@ This is a powerful Streamlit-based financial analysis tool that allows users to 
 - Offers visualizations (bar, line, pie, scatter, histogram) with AI recommendations
 - Generates a professional PDF report
 - Includes live tax updates from Indian regulations (last 3 months)
-- Save/load reports with a local database
 - Built-in chat assistant to answer financial questions
 
 ## Tech Stack
 
 - **Frontend**: Streamlit
 - **Backend/AI**: LangChain with Gemini 1.5 Flash
-- **Database**: SQLite (`db_utils`)
 - **PDF Generation**: FPDF
 - **Visualization**: Plotly
 - **Environment Variables**: Python-dotenv for API key
@@ -54,7 +52,6 @@ This is a powerful Streamlit-based financial analysis tool that allows users to 
 ## Notes
 
 - You must have a valid Gemini API key from Google AI Studio.
-- Ensure `db_utils.py` is present for report storage functionality.
 - Tested with Tally and accounting exports in Excel/CSV formats.
 
 ## License
