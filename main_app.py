@@ -9,6 +9,15 @@ from io import BytesIO
 from fpdf import FPDF
 from datetime import datetime
 
+@st.cache_resource
+def get_db_connection():
+    try:
+        conn = sqlite3.connect("financial_reports.db")
+        return conn
+    except Exception as e:
+        st.error(f"Database connection failed: {str(e)}")
+        st.stop()
+        
 # Initialize DB (run once at startup)
 from db_utils import init_db, save_report, load_all_reports, load_single_report
 init_db()
