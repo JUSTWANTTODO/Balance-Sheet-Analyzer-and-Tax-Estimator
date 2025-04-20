@@ -13,8 +13,11 @@ from datetime import datetime
 from db_utils import init_db, save_report, load_all_reports, load_single_report
 init_db()
 
-# Load environment variables
-load_dotenv()
+
+google_api_key = st.secrets.get("GOOGLE_API_KEY", os.getenv("GOOGLE_API_KEY"))
+if not google_api_key:
+    st.error("Google API key not found. Please configure it in Streamlit secrets.")
+    st.stop()
 
 # Configure Streamlit
 st.set_page_config(page_title="Balance Sheet Analyzer & Tax Estimator", layout="wide")
@@ -480,7 +483,16 @@ if uploaded_file:
         
         if st.button("Generate Financial Analysis", type="primary"):
             with st.spinner("Analyzing financial data..."):
-                analysis = analyze_financials(data)
+                # Add a progress bar and timeout
+                with st.spinner("Analyzing financial data..."):
+                    progress_bar = st.progress(0)
+                    try:
+                        analysis = analyze_financials(data)
+                        progress_bar.progress(100)
+                    except Exception as e:
+                        st.error(f"Analysis failed: {str(e)}")
+                        st.stop()
+                                
                 st.session_state.analysis = analysis
                 st.session_state.analysis_done = True
                 st.session_state.messages = []
