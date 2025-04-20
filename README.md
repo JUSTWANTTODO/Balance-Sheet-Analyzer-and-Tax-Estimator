@@ -1,7 +1,3 @@
-Here's a ready-to-paste `README.md` for your Streamlit app based on the uploaded `main_app.py` file:
-
----
-
 # Balance Sheet Analyzer & Tax Estimator
 
 This is a powerful Streamlit-based web application that analyzes uploaded financial data (Excel/CSV), generates Profit & Loss statements, estimates tax liability, summarizes TDS and GST, and provides interactive visualizations and updates on Indian tax laws. It uses Google's Gemini Pro (via LangChain) for financial reasoning and report generation.
@@ -64,7 +60,3 @@ This is a powerful Streamlit-based web application that analyzes uploaded financ
 ## License
 
 MIT License. You are free to use, modify, and distribute this tool with attribution.
-
----
-
-Let me know if you also need the `requirements.txt` or deployment instructions.
