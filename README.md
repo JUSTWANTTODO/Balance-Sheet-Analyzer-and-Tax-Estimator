@@ -32,8 +32,9 @@ This is a powerful Streamlit-based web application that analyzes uploaded financ
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/financial-analyzer.git
-   cd financial-analyzer
+  git clone https://github.com/JUSTWANTTODO/Balance-Sheet-Analyzer-and-Tax-Estimator.git
+  cd Balance-Sheet-Analyzer-and-Tax-Estimator
+
    ```
 
 2. **Install dependencies**:
