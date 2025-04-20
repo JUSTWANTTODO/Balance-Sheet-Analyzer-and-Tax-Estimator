@@ -9,19 +9,6 @@ from io import BytesIO
 from fpdf import FPDF
 from datetime import datetime
 
-@st.cache_resource
-def get_db_connection():
-    try:
-        conn = sqlite3.connect("financial_reports.db")
-        return conn
-    except Exception as e:
-        st.error(f"Database connection failed: {str(e)}")
-        st.stop()
-        
-# Initialize DB (run once at startup)
-from db_utils import init_db, save_report, load_all_reports, load_single_report
-init_db()
-
 
 google_api_key=st.secrets["GOOGLE_API_KEY"]
 if not google_api_key:
@@ -569,28 +556,7 @@ if uploaded_file:
                         b64 = base64.b64encode(pdf_output).decode()
                         href = f'<a href="data:application/pdf;base64,{b64}" download="financial_analysis.pdf" style="text-decoration: none; background-color: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px; display: inline-block;">Download PDF Report</a>'
                         st.markdown(href, unsafe_allow_html=True)
-                                    
-                with col2:
-                    # Save to DB button
-                    if st.button("Save Report"):
-                        # Convert file data to bytes if it's a DataFrame
-                        if isinstance(st.session_state.financial_data, pd.DataFrame):
-                            file_data = st.session_state.financial_data.to_csv(index=False).encode()
-                        elif isinstance(st.session_state.financial_data, dict):
-                            # Handle multi-sheet Excel data
-                            output = BytesIO()
-                            with pd.ExcelWriter(output, engine='openpyxl') as writer:
-                                for sheet_name, df in st.session_state.financial_data.items():
-                                    df.to_excel(writer, sheet_name=sheet_name, index=False)
-                            file_data = output.getvalue()
-                        
-                        save_report(
-                            filename=uploaded_file.name if uploaded_file else "Manual Entry",
-                            analysis_text=st.session_state.analysis,
-                            file_data=file_data
-                        )
-                        st.success("Report saved successfully!")
-        
+                                
         with tab2:
             if isinstance(data, dict):
                 sheet_name = st.selectbox("Select sheet to view", list(data.keys()))
@@ -684,66 +650,6 @@ if st.session_state.analysis_done:
         # Display assistant response
         with st.chat_message("assistant"):
             st.markdown(response)
-
-# Add to your sidebar (after file uploader)
-st.sidebar.header("Saved Reports")
-
-# Load all saved reports
-saved_reports = load_all_reports()
-
-# In your main app where you load reports:
-if not saved_reports.empty:
-    selected_report = st.sidebar.selectbox(
-        "Select a saved report",
-        saved_reports["filename"] + " (" + saved_reports["upload_date"] + ")"
-    )
-    
-    if st.sidebar.button("Load Selected Report"):
-        report_id = saved_reports[saved_reports["filename"] + " (" + saved_reports["upload_date"] + ")" == selected_report]["id"].values[0]
-        
-        # Use a context manager for database connection
-        conn = sqlite3.connect("financial_reports.db")
-        try:
-            c = conn.cursor()
-            c.execute("SELECT filename, analysis_text, file_data FROM reports WHERE id=?", (report_id,))
-            result = c.fetchone()
-            
-            if result is not None:
-                filename, analysis_text, file_data = result
-                
-                # Restore the state more thoroughly
-                st.session_state.analysis = analysis_text
-                st.session_state.analysis_done = True
-                st.session_state.messages = [{
-                    "role": "assistant",
-                    "content": "Loaded saved report. What would you like to discuss?"
-                }]
-                
-                # Try to restore file data with better error handling
-                try:
-                    if file_data:
-                        if filename.endswith('.csv'):
-                            st.session_state.financial_data = pd.read_csv(BytesIO(file_data))
-                        elif filename.endswith(('.xlsx', '.xls')):
-                            st.session_state.financial_data = pd.read_excel(
-                                BytesIO(file_data), 
-                                sheet_name=None,
-                                engine='openpyxl'
-                            )
-                        st.success(f"Successfully loaded report: {filename}")
-                except Exception as e:
-                    st.error(f"Could not restore file data: {str(e)}")
-                    st.session_state.financial_data = None
-                
-                # Force a rerun to update the UI
-                st.rerun()
-            else:
-                st.error("Report not found in database")
-                
-        except Exception as e:
-            st.error(f"Database error: {str(e)}")
-        finally:
-            conn.close()
 
 # Add custom CSS
 st.markdown("""
