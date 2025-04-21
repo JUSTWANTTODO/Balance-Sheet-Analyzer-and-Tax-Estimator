@@ -7,17 +7,7 @@ import plotly.express as px
 import base64
 from io import BytesIO
 from fpdf import FPDF
-from datetime import datetime
-
-
-if "GOOGLE_API_KEY" not in st.secrets:
-    st.error("""
-        API key not configured. For public repositories:
-        1. Go to Streamlit Cloud → Settings → Secrets
-        2. Add: GOOGLE_API_KEY='your_actual_key_here'
-        3. Never commit secrets to GitHub!
-        """)
-    st.stop()  
+from datetime import datetime 
     
 google_api_key = st.secrets["GOOGLE_API_KEY"]
 
