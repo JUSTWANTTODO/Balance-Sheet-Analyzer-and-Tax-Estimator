@@ -53,6 +53,7 @@ This is a powerful Streamlit-based financial analysis tool that allows users to 
 
 - You must have a valid Gemini API key from Google AI Studio.
 - Tested with Tally and accounting exports in Excel/CSV formats.
+- Alternate file (for main_app.py) - AlterForDotEnv.py
 
 ## License
 
